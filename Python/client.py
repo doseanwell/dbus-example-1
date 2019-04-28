@@ -8,7 +8,7 @@ DBUS_OBJECT_PATH = '/com/kssim/test'
 
 if __name__ == '__main__':
     try:
-        bus = dbus.SystemBus()
+        bus = dbus.SessionBus()
         bus_object = bus.get_object(DBUS_BUS_NAME, DBUS_OBJECT_PATH)
         bus_interface = dbus.Interface(bus_object, DBUS_BUS_NAME)
 

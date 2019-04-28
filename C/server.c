@@ -88,7 +88,37 @@ int waitSignal(void) {
     dbus_error_free(&error);
     return 0;
 }
-
+static void *thrd_introspect_loop(void *arg)
+{
+    int ret;
+    int loop_timeout = 1000;
+    int iloop = 0;
+    while(1) {
+        ret = dbus_connection_read_write_dispatch(g_connection, loop_timeout);
+        printf(" ...  loop %d res = %d\n", iloop++, ret);
+    }
+}
+/*******************************************************************************
+ * 名称: create_static_mode_thread
+ * 功能: 创建静态采集模式线程
+ * 形参: gnss_process：Gnss_Process_Type结构体指针
+ * 返回: 0 ：成功 -1：失败
+ * 说明: 无
+ ******************************************************************************/
+static int create_introspect_loop_thread()
+{
+    pthread_t tid;
+//  qbox_delay_us(100);
+    if (pthread_create(&tid, NULL, thrd_introspect_loop, NULL)!=0) {
+        printf("Create thrd_introspect_loop thread error!\n");
+        return -1;
+    }
+    else
+    {
+        printf("Create thrd_introspect_loop thread Success!\r\n");
+    }
+    return 0;
+}
 int main(void) {
     if (initConnection() != 0) {
         return -1;
@@ -97,10 +127,18 @@ int main(void) {
     if (requestBusName(DBUS_BUS_SERVER_NAME) != 0) {
         return -1;
     }
-
-    if (waitSignal() != 0) {
-        return -1;
+    // create_introspect_loop_thread();
+    // while(1);
+    // if (waitSignal() != 0) {
+    //     return -1;
+    // }
+    int ret;
+    int loop_timeout = 1000;
+    int iloop = 0;
+    while(1) {
+        ret = dbus_connection_read_write_dispatch(g_connection, loop_timeout);
+        printf(" ...  loop %d res = %d\n", iloop++, ret);
     }
-
+    closeConnect();
     return 0;
 }

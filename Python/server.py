@@ -16,7 +16,7 @@ class EventHandler(dbus.service.Object):
     print_msg = 'Hello world'
 
     def __init__(self):
-        bus = dbus.SystemBus()
+        bus = dbus.SessionBus()
         bus.add_signal_receiver(self.receive_signal, dbus_interface=DBUS_INTERFACE, signal_name=DBUS_SIGNAL_NAME)
 
         bus_name = dbus.service.BusName(DBUS_BUS_NAME, bus)
