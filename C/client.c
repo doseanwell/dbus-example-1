@@ -1,8 +1,8 @@
-#include "common.h"
+#include "dbus_common.h"
 
 extern DBusConnection *g_connection;
 
-int sendMethodCall(void) {
+int sendMethodCall(DBusConnection *connection) {
     DBusMessage *message;
     DBusPendingCall *pending;
 
@@ -12,7 +12,7 @@ int sendMethodCall(void) {
         return -1;
     }
 
-    if (!dbus_connection_send_with_reply(g_connection, message, &pending, -1)) {
+    if (!dbus_connection_send_with_reply(connection, message, &pending, -1)) {
         fprintf(stderr, "Out of memory \n");
         return -1;
     }
@@ -38,7 +38,7 @@ int sendMethodCall(void) {
     dbus_message_unref(message);
 }
 
-int sendSignal(char *signalParam) {
+int sendSignal(DBusConnection *connection, char *signalParam) {
     DBusMessage *message;
     DBusMessageIter args;
     DBusError error;
@@ -62,28 +62,31 @@ int sendSignal(char *signalParam) {
         }
     }
 
-    if (!dbus_connection_send(g_connection, message, &serial)) {
+    if (!dbus_connection_send(connection, message, &serial)) {
         fprintf(stderr, "Out of memory\n");
         return -1;
     }
 
-    dbus_connection_flush(g_connection);
+    dbus_connection_flush(connection);
     printf("Signal has been sent.\n");
     return 0;
 }
 
 int main(int argc, char **argv) {
-    if (initConnection() != 0) {
-        return -1;
+    DBusConnection *connection;
+
+    connection = init_connection();
+    if (!connection) {
+        return NULL;
     }
 
-    if (requestBusName(DBUS_BUS_NAME) != 0) {
+    if (request_bus_name(connection, DBUS_BUS_NAME) != 0) {
         return -1;
     }
 
     // Send signal
     printf("Send d-bus signal\n");
-    if (sendSignal(argv[1]) != 0) {
+    if (sendSignal(connection, argv[1]) != 0) {
         return -1;
     }
 
@@ -92,7 +95,7 @@ int main(int argc, char **argv) {
 
     // Send method call
     printf("Send d-bus method call\n");
-    if (sendMethodCall() != 0) {
+    if (sendMethodCall(connection) != 0) {
         return -1;
     }
 

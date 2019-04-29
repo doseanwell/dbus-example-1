@@ -16,9 +16,10 @@ if __name__ == '__main__':
         # bus_interface.receive_signal('send_signal')
 
         # reply_message = bus_object.get_dbus_method('reply_msg', DBUS_BUS_SERVER_NAME)
-        # send_arg_and_msg = bus_object.get_dbus_method('send_arg_and_msg', DBUS_BUS_SERVER_NAME)
-        bus_interface.HelloWorldMethod(1)
+        # send_arg_and_msg = bus_object.""get_dbus_method('send_arg_and_msg', DBUS_BUS_SERVER_NAME)
+        ret = bus_interface.HelloWorldMethod("Are you OK?")
         print "Run success"
+        print ret
         # print(reply_message())
         # print(send_arg_and_msg('Hello', 'world'))
     except:
